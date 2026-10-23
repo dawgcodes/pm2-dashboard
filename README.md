@@ -517,7 +517,7 @@ The directory is created automatically on first deploy. Use an absolute path to 
 
 ---
 
-## Sponsorship [![](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/orangecoding)
+## Sponsorship [![](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/dawgcodes)
 
 I maintain this and other open-source projects in my free time.
 If you find it useful, consider supporting the project.
