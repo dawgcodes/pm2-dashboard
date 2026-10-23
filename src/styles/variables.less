@@ -1,0 +1,82 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PM2 - Hawkeye   Design tokens & CSS custom properties
+
+   Three locks are enforced across every partial:
+     1. Accent lock  - coral is the only accent. Green/amber/red are semantic
+                       status colours, never decoration.
+     2. Shape lock   - exactly two radii. --r-1 for controls, --r-2 for
+                       surfaces. Nothing else.
+     3. Space lock   - a 4px scale. No arbitrary paddings.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Backgrounds ─────────────────────────────────────────────────────── */
+  --bg-0: #0b0b0d;  /* app ground */
+  --bg-1: #111114;  /* panels / chrome */
+  --bg-2: #17171b;  /* raised rows, inputs */
+  --bg-3: #1e1e23;  /* hover / active rows */
+
+  /* ── Borders ─────────────────────────────────────────────────────────── */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  /* ── Text ────────────────────────────────────────────────────────────── */
+  --text: #ededf0;
+  --text-dim: #a7a7ae;
+  --muted: #77777f;
+
+  /* ── Accent (coral) - the only accent on the page ────────────────────── */
+  --accent: #fd8c66;
+  /* Hover brightens the coral. It used to darken into #f8494d, a red that made
+     every primary confirm button look like a destructive one. */
+  --accent-hover: #ffa383;
+  --accent-soft: rgba(253, 140, 102, 0.12);
+  --accent-line: rgba(253, 140, 102, 0.34);
+  --on-accent: #1a0d07;   /* text on a filled coral surface, 11.4:1 */
+
+  /* ── Semantic status ─────────────────────────────────────────────────── */
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.13);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.13);
+  --critical: #f87171;
+  --critical-soft: rgba(248, 113, 113, 0.13);
+  --info: #60a5fa;
+  --info-soft: rgba(96, 165, 250, 0.13);
+
+  /* ── Log level colours ───────────────────────────────────────────────── */
+  --log-error: #f87171;
+  --log-warn: #fbbf24;
+  --log-info: #60a5fa;
+  --log-debug: #77777f;
+  --log-default: #c4c4cc;
+
+  /* ── Shape lock: two radii only ──────────────────────────────────────── */
+  --r-1: 0.25rem;   /* controls: buttons, inputs, pills, chips */
+  --r-2: 0.5rem;    /* surfaces: panels, modals, popovers */
+
+  /* ── Space lock: 4px scale ───────────────────────────────────────────── */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.25rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-10: 2.5rem;
+
+  /* ── Elevation - tinted to the ground, never pure black ──────────────── */
+  --shadow-1: 0 0.0625rem 0.125rem rgba(6, 6, 8, 0.6);
+  --shadow-2: 0 1rem 2.5rem rgba(6, 6, 8, 0.55);
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+
+  /* ── Fixed chrome heights ────────────────────────────────────────────── */
+  --topbar-h: 3rem;
+  --sidebar-w: 15rem;
+  --footer-h: 2rem;
+}

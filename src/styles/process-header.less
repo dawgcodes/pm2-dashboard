@@ -1,0 +1,209 @@
+/* ── Process header ─────────────────────────────────────────────────────────
+   States which object you are acting on, and carries only the two controls
+   that are used continuously (Restart, Stop/Start). Everything else lives in
+   the Manage tab, one keystroke away, instead of crowding this row.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.process-header {
+  flex-shrink: 0;
+  padding: var(--s-4) var(--s-5) 0;
+  border-bottom: 0.0625rem solid var(--border);
+}
+
+.process-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  min-height: 2rem;
+}
+
+.process-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* ── Deployment identity ────────────────────────────────────────────────────
+   States that Hawkeye deployed this process, and from where. Nothing in the
+   app said so before: a deployed process looked exactly like one started by
+   hand on the command line. Clicking it opens the deployment configuration.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.deploy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.375rem;
+  padding: 0 var(--s-2);
+  flex-shrink: 0;
+  max-width: 22rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+
+  &:hover {
+    border-color: var(--border-strong);
+    color: var(--text-dim);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.deploy-chip-repo {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deploy-chip-branch {
+  flex-shrink: 0;
+  padding: 0 var(--s-1);
+  border-radius: 0.125rem;
+  background: var(--bg-3);
+  font-family: var(--font-mono);
+}
+
+.process-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Inline stat strip ──────────────────────────────────────────────────────
+   VISUAL_DENSITY 7: numbers breathe in plain layout with hairlines, no card
+   boxes. Always visible, so CPU and memory are readable while reading logs.
+   ───────────────────────────────────────────────────────────────────────── */
+
+// One quiet data line. The labels used to be uppercase, letterspaced and
+// semibold while the values were bold white, which put eight competing weights
+// across a row that is only ever glanced at.
+.stat-strip {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-5);
+  padding: var(--s-2) 0 var(--s-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  overflow-x: auto;
+}
+
+.stat-strip-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  white-space: nowrap;
+}
+
+/* cpu and mem are shortcuts into the Metrics tab, so they are real buttons.
+   They must not read as buttons: same type, one quiet hover cue. */
+.stat-strip-item--link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  .stat-strip-value {
+    text-decoration: underline dotted var(--border-strong);
+    text-underline-offset: 0.25em;
+  }
+
+  &:hover .stat-strip-value,
+  &:focus-visible .stat-strip-value {
+    color: var(--text);
+    text-decoration-color: var(--accent-line);
+  }
+}
+
+.stat-strip-label {
+  color: var(--muted);
+}
+
+.stat-strip-value {
+  color: var(--text-dim);
+}
+
+.stat-strip-empty {
+  padding: var(--s-3) 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+/* ── Header empty state ─────────────────────────────────────────────────── */
+
+.process-header--empty {
+  display: flex;
+  align-items: center;
+  min-height: 3.5rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+// Between roughly 46rem and 62rem the name, meta and both controls stop fitting
+// on one line, so the meta wraps under the title before the controls do.
+@media (max-width: 62rem) {
+  .process-header-row {
+    flex-wrap: wrap;
+  }
+
+  .deploy-chip {
+    order: 3;
+  }
+}
+
+@media (max-width: 45rem) {
+  .process-header {
+    padding: var(--s-3) var(--s-4) 0;
+  }
+
+  .process-name {
+    flex: 1;
+  }
+
+  .process-header-actions {
+    flex-basis: 100%;
+  }
+
+  .process-header-actions .btn {
+    flex: 1;
+  }
+
+  .deploy-chip {
+    max-width: 100%;
+  }
+
+  .stat-strip {
+    gap: var(--s-4);
+  }
+
+  // The confirm prompt needs the full row rather than squeezing the buttons.
+  .process-header-actions .confirm {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--s-2);
+  }
+
+  .tabs {
+    overflow-x: auto;
+  }
+}

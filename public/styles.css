@@ -1,0 +1,2650 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   PM2 - Hawkeye   Main stylesheet (imports per-component partials)
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* Foundation */
+/* ═══════════════════════════════════════════════════════════════════════════
+   PM2 - Hawkeye   Design tokens & CSS custom properties
+
+   Three locks are enforced across every partial:
+     1. Accent lock  - coral is the only accent. Green/amber/red are semantic
+                       status colours, never decoration.
+     2. Shape lock   - exactly two radii. --r-1 for controls, --r-2 for
+                       surfaces. Nothing else.
+     3. Space lock   - a 4px scale. No arbitrary paddings.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  color-scheme: dark;
+  /* ── Backgrounds ─────────────────────────────────────────────────────── */
+  --bg-0: #0b0b0d;
+  /* app ground */
+  --bg-1: #111114;
+  /* panels / chrome */
+  --bg-2: #17171b;
+  /* raised rows, inputs */
+  --bg-3: #1e1e23;
+  /* hover / active rows */
+  /* ── Borders ─────────────────────────────────────────────────────────── */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  /* ── Text ────────────────────────────────────────────────────────────── */
+  --text: #ededf0;
+  --text-dim: #a7a7ae;
+  --muted: #77777f;
+  /* ── Accent (coral) - the only accent on the page ────────────────────── */
+  --accent: #fd8c66;
+  /* Hover brightens the coral. It used to darken into #f8494d, a red that made
+     every primary confirm button look like a destructive one. */
+  --accent-hover: #ffa383;
+  --accent-soft: rgba(253, 140, 102, 0.12);
+  --accent-line: rgba(253, 140, 102, 0.34);
+  --on-accent: #1a0d07;
+  /* text on a filled coral surface, 11.4:1 */
+  /* ── Semantic status ─────────────────────────────────────────────────── */
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.13);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.13);
+  --critical: #f87171;
+  --critical-soft: rgba(248, 113, 113, 0.13);
+  --info: #60a5fa;
+  --info-soft: rgba(96, 165, 250, 0.13);
+  /* ── Log level colours ───────────────────────────────────────────────── */
+  --log-error: #f87171;
+  --log-warn: #fbbf24;
+  --log-info: #60a5fa;
+  --log-debug: #77777f;
+  --log-default: #c4c4cc;
+  /* ── Shape lock: two radii only ──────────────────────────────────────── */
+  --r-1: 0.25rem;
+  /* controls: buttons, inputs, pills, chips */
+  --r-2: 0.5rem;
+  /* surfaces: panels, modals, popovers */
+  /* ── Space lock: 4px scale ───────────────────────────────────────────── */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.25rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-10: 2.5rem;
+  /* ── Elevation - tinted to the ground, never pure black ──────────────── */
+  --shadow-1: 0 0.0625rem 0.125rem rgba(6, 6, 8, 0.6);
+  --shadow-2: 0 1rem 2.5rem rgba(6, 6, 8, 0.55);
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", "Consolas", monospace;
+  /* ── Fixed chrome heights ────────────────────────────────────────────── */
+  --topbar-h: 3rem;
+  --sidebar-w: 15rem;
+  --footer-h: 2rem;
+}
+/* ── Reset & base typography ────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+@media (max-width: 45rem) {
+  html,
+  body {
+    height: auto;
+    overflow: auto;
+  }
+}
+@media (min-width: 45.0625rem) and (max-height: 40rem) {
+  html,
+  body {
+    height: auto;
+    overflow-y: auto;
+  }
+}
+body {
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg-0);
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.015em;
+  font-weight: 600;
+}
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+/* ── Shared text helpers ────────────────────────────────────────────────── */
+.section-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.subtle {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+/* ── Empty state ────────────────────────────────────────────────────────── */
+.empty-note {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  padding: var(--s-8) var(--s-4);
+  color: var(--muted);
+  text-align: center;
+}
+.empty-note strong {
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.empty-note p {
+  margin: 0;
+  font-size: 0.8125rem;
+  max-width: 32rem;
+}
+.empty-note.compact {
+  padding: var(--s-4);
+}
+/* ── Focus ──────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 0.125rem solid var(--accent);
+  outline-offset: 0.125rem;
+  border-radius: var(--r-1);
+}
+/* ── Scrollbars ─────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-3) transparent;
+}
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-3);
+  border-radius: var(--r-1);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  animation: fade-in 140ms ease both;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* ── Buttons ────────────────────────────────────────────────────────────────
+   One button system for the whole app. Three intents (default / primary /
+   danger) and two sizes (default / sm). Every other ad-hoc button class in the
+   codebase maps onto these.
+   ───────────────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 2rem;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border-strong);
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, transform 60ms ease;
+}
+.btn:hover:not(:disabled) {
+  background: var(--bg-3);
+  border-color: var(--border-strong);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0.0625rem);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn svg {
+  flex-shrink: 0;
+}
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.btn--primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.btn--danger {
+  color: var(--critical);
+  border-color: var(--border-strong);
+}
+.btn--danger:hover:not(:disabled) {
+  background: var(--critical-soft);
+  border-color: var(--critical);
+}
+.btn--quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+}
+.btn--quiet:hover:not(:disabled) {
+  background: var(--bg-2);
+  color: var(--text);
+}
+.btn--sm {
+  height: 1.625rem;
+  padding: 0 var(--s-2);
+  font-size: 0.75rem;
+}
+.btn--icon {
+  width: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+}
+.btn--icon:hover:not(:disabled) {
+  background: var(--bg-3);
+  color: var(--text);
+}
+.btn--icon[aria-pressed='true'] {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+.btn--block {
+  width: 100%;
+}
+/* ── Inline confirm ─────────────────────────────────────────────────────────
+   The single confirmation idiom used everywhere a destructive or disruptive
+   action is triggered. Replaces the four different patterns the app used to
+   mix (inline yes/no, strip confirm, window.confirm, modal confirm box).
+   ───────────────────────────────────────────────────────────────────────── */
+.confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 2rem;
+  padding: 0 var(--s-1) 0 var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--accent-line);
+  background: var(--accent-soft);
+  animation: fade-in 120ms ease both;
+}
+.confirm-label {
+  font-size: 0.8125rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+.confirm-actions {
+  display: flex;
+  gap: var(--s-1);
+}
+/* ── Form controls ──────────────────────────────────────────────────────── */
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 0 var(--s-3);
+  height: 2.125rem;
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border-strong);
+  background: var(--bg-0);
+  color: var(--text);
+  font-size: 0.8125rem;
+  transition: border-color 120ms ease;
+}
+.input::placeholder,
+.select::placeholder,
+.textarea::placeholder {
+  color: var(--muted);
+}
+.input:hover:not(:disabled):not(:read-only),
+.select:hover:not(:disabled):not(:read-only),
+.textarea:hover:not(:disabled):not(:read-only) {
+  border-color: var(--border-strong);
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+.input:disabled,
+.select:disabled,
+.textarea:disabled,
+.input:read-only,
+.select:read-only,
+.textarea:read-only {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.textarea {
+  height: auto;
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+.select {
+  appearance: none;
+  padding-right: var(--s-8);
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 1rem) 55%, calc(100% - 0.7rem) 55%;
+  background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+/* Label above input, hint below. Never placeholder-as-label. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.field > label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.field .hint {
+  margin-top: calc(var(--s-1) * -1);
+}
+.field-req {
+  color: var(--accent);
+  margin-left: 0.125rem;
+}
+/* ── Toggle switch ──────────────────────────────────────────────────────── */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle .toggle-track {
+  position: relative;
+  width: 1.875rem;
+  height: 1.0625rem;
+  flex-shrink: 0;
+  border-radius: 0.53125rem;
+  background: var(--bg-3);
+  border: 0.0625rem solid var(--border-strong);
+  transition: background-color 130ms ease, border-color 130ms ease;
+}
+.toggle .toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 0.6875rem;
+  height: 0.6875rem;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: transform 130ms ease, background-color 130ms ease;
+}
+.toggle input:checked + .toggle-track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle input:checked + .toggle-track::after {
+  transform: translateX(0.8125rem);
+  background: var(--on-accent);
+}
+.toggle input:focus-visible + .toggle-track {
+  outline: 0.125rem solid var(--accent);
+  outline-offset: 0.125rem;
+}
+.toggle .toggle-label {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+/* ── Status vocabulary ──────────────────────────────────────────────────────
+   One source of truth for how process state is drawn. Every surface (sidebar
+   row, process header, offline list) uses these, so "online" looks identical
+   wherever it appears.
+   ───────────────────────────────────────────────────────────────────────── */
+.status-dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--muted);
+}
+.status-dot[data-status='online'] {
+  background: var(--success);
+}
+.status-dot[data-status='stopped'] {
+  background: var(--muted);
+}
+.status-dot[data-status='stopping'],
+.status-dot[data-status='launching'],
+.status-dot[data-status='one-launch-status'] {
+  background: var(--warning);
+}
+.status-dot[data-status='errored'],
+.status-dot[data-status='error'] {
+  background: var(--critical);
+}
+.status-text {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.status-text[data-status='online'] {
+  color: var(--success);
+}
+.status-text[data-status='stopping'],
+.status-text[data-status='launching'],
+.status-text[data-status='one-launch-status'] {
+  color: var(--warning);
+}
+.status-text[data-status='errored'],
+.status-text[data-status='error'] {
+  color: var(--critical);
+}
+/* ── Tags ───────────────────────────────────────────────────────────────────
+   Small non-interactive labels. Semantic colour only, never decoration.
+   ───────────────────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  height: 1.125rem;
+  padding: 0 var(--s-2);
+  border-radius: var(--r-1);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background: var(--bg-3);
+  color: var(--text-dim);
+}
+.tag--accent {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tag--success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.tag--warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.tag--critical {
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+/* Shell */
+/* ── Layout shell ───────────────────────────────────────────────────────────
+   Three fixed regions: topbar (global), sidebar (choose an object), content
+   (act on it). Predictable grid, DESIGN_VARIANCE 3 - an ops tool must never
+   move its furniture.
+   ───────────────────────────────────────────────────────────────────────── */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr) var(--footer-h);
+  height: 100vh;
+  background: var(--bg-0);
+}
+/* ── Top bar ────────────────────────────────────────────────────────────── */
+.app-topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-width: 0;
+  height: var(--topbar-h);
+  padding: 0 var(--s-4);
+  background: var(--bg-1);
+  border-bottom: 0.0625rem solid var(--border);
+  z-index: 20;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.topbar-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border-radius: var(--r-1);
+  background: var(--accent-soft);
+}
+.topbar-brand-logo svg {
+  display: block;
+}
+.topbar-brand-wordmark {
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+.topbar-brand-wordmark .brand-pm2 {
+  color: var(--accent);
+}
+.topbar-brand-wordmark .brand-hawkeye {
+  color: var(--text);
+}
+.topbar-spacer {
+  flex: 1;
+  min-width: 0;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+}
+.topbar-divider {
+  width: 0.0625rem;
+  height: 1.25rem;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.topbar-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+.topbar-menu-btn:hover {
+  background: var(--bg-2);
+  color: var(--text);
+}
+.topbar-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: var(--topbar-h) 0 0 0;
+  background: rgba(6, 6, 8, 0.6);
+  z-index: 40;
+}
+/* ── Connection state ───────────────────────────────────────────────────────
+   The websocket is the app's single transport. When it drops, every number on
+   screen is stale, so the state is stated rather than hidden.
+   ───────────────────────────────────────────────────────────────────────── */
+.conn-state {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-2);
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.conn-state[data-connected='false'] {
+  color: var(--warning);
+}
+.conn-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--success);
+}
+.conn-state[data-connected='false'] .conn-dot {
+  background: var(--warning);
+}
+/* ── Content column ─────────────────────────────────────────────────────── */
+.content {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg-1);
+}
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.app-footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--footer-h);
+  padding: 0 var(--s-4);
+  background: var(--bg-1);
+  border-top: 0.0625rem solid var(--border);
+  color: var(--muted);
+  font-size: 0.6875rem;
+  z-index: 10;
+}
+.app-footer-version {
+  font-family: var(--font-mono);
+}
+.app-footer-credit a {
+  color: var(--text-dim);
+  text-decoration: none;
+}
+.app-footer-credit a:hover {
+  color: var(--accent);
+}
+/* ── Welcome state ──────────────────────────────────────────────────────── */
+.welcome-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-8) var(--s-6);
+  min-height: 0;
+  overflow-y: auto;
+}
+.welcome-card {
+  max-width: 30rem;
+}
+.welcome-card h2 {
+  margin: 0 0 var(--s-2);
+  font-size: 1.125rem;
+}
+.welcome-hints {
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 0.0625rem solid var(--border);
+}
+.welcome-hints-title {
+  margin: 0 0 var(--s-3);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+.welcome-hints-list {
+  display: grid;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.welcome-hints-list li {
+  display: grid;
+  grid-template-columns: 1.25rem 1fr;
+  gap: var(--s-2);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.welcome-hints-list li strong {
+  display: block;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.welcome-hint-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.25rem;
+  color: var(--accent);
+}
+/* ── Responsive: mobile (<= 45rem / 720 px) ─────────────────────────────── */
+@media (max-width: 45rem) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 100dvh;
+  }
+  .topbar-menu-btn {
+    display: flex;
+  }
+  .topbar-drawer-overlay {
+    display: block;
+  }
+  .app-topbar {
+    position: sticky;
+    top: 0;
+    gap: var(--s-2);
+    padding: 0 var(--s-2);
+  }
+  .content {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+  }
+  .topbar-actions .btn--primary span,
+  .topbar-brand-wordmark,
+  .topbar-divider {
+    display: none;
+  }
+  .conn-state {
+    padding: 0;
+  }
+  .conn-state span:not(.conn-dot) {
+    display: none;
+  }
+  .app-footer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    height: auto;
+    padding: var(--s-2) var(--s-4);
+  }
+}
+/* ── Short desktop viewports ────────────────────────────────────────────── */
+@media (min-width: 45.0625rem) and (max-height: 40rem) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    grid-template-rows: var(--topbar-h) auto var(--footer-h);
+  }
+}
+/* ── Host health readout ────────────────────────────────────────────────────
+   Was three buttons in the topbar, each opening its own popover with a chart.
+   Now it states the numbers and nothing else: the charts live in the Metrics
+   tab, which is where a user goes to look at trends.
+   ───────────────────────────────────────────────────────────────────────── */
+.host-readout {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding-left: var(--s-2);
+  min-width: 0;
+}
+.host-readout-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.host-stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  white-space: nowrap;
+}
+/* Same shortcut idiom as the process stat strip: a button that reads as text. */
+.host-stat--link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.host-stat--link .host-stat-value {
+  text-decoration: underline dotted var(--border-strong);
+  text-underline-offset: 0.25em;
+}
+.host-stat--link:hover .host-stat-value,
+.host-stat--link:focus-visible .host-stat-value {
+  color: var(--text);
+  text-decoration-color: var(--accent-line);
+}
+.host-stat-label {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.host-stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  /* Pressure is a real signal, so it is allowed to colour the number. */
+}
+.host-stat-value[data-level='warn'] {
+  color: var(--warning);
+}
+.host-stat-value[data-level='critical'] {
+  color: var(--critical);
+}
+@media (max-width: 60rem) {
+  .host-readout-label {
+    display: none;
+  }
+  .host-readout {
+    gap: var(--s-3);
+  }
+}
+@media (max-width: 45rem) {
+  .host-readout {
+    display: none;
+  }
+}
+/* ── Sidebar: the object picker ─────────────────────────────────────────────
+   One job: choose a process. Rows are grouped by state so a stopped or broken
+   app cannot hide in the middle of a long running list.
+   ───────────────────────────────────────────────────────────────────────── */
+.app-sidebar {
+  grid-row: 2;
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 0.0625rem solid var(--border);
+  background: var(--bg-1);
+}
+.sidebar-search {
+  position: relative;
+  padding: var(--s-3);
+  border-bottom: 0.0625rem solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-search .input {
+  height: 1.875rem;
+  padding-left: 1.875rem;
+  font-size: 0.75rem;
+  background: var(--bg-2);
+}
+.sidebar-search-icon {
+  position: absolute;
+  left: 1.375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+.process-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--s-3);
+}
+.process-group {
+  padding-top: var(--s-3);
+}
+.process-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: 0 var(--s-3) var(--s-2);
+}
+.process-group-count {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+/* ── Row ────────────────────────────────────────────────────────────────── */
+.process-item {
+  display: grid;
+  grid-template-columns: 0.4375rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-2);
+  width: calc(100% - var(--s-3));
+  margin: 0 0 0.0625rem var(--s-1);
+  padding: var(--s-2) var(--s-2);
+  border: 0;
+  border-radius: var(--r-1);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+.process-item:hover {
+  background: var(--bg-2);
+}
+.process-item.active {
+  background: var(--bg-3);
+}
+.process-item.active .process-item-name {
+  color: var(--text);
+  font-weight: 600;
+}
+.process-item-name {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+.process-item-deployed {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.process-item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* Recording indicator: real semantic state (history is being persisted). */
+.process-item-rec {
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+}
+.sidebar-empty {
+  padding: var(--s-6) var(--s-4);
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+/* ── Offline deployments ────────────────────────────────────────────────────
+   Deployments with no running PM2 process. Same row shape as a process so the
+   list reads as one thing, with an explicit state tag instead of a dot.
+   ───────────────────────────────────────────────────────────────────────── */
+.offline-item {
+  padding: var(--s-2) var(--s-3);
+  margin: 0 var(--s-1);
+  border-radius: var(--r-1);
+}
+.offline-item:hover {
+  background: var(--bg-2);
+}
+.offline-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  margin-bottom: var(--s-2);
+}
+.offline-item-top .process-item-name {
+  flex: 1;
+}
+.offline-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+.offline-item-actions > .btn {
+  flex: 1;
+}
+.offline-item-actions .confirm {
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  height: auto;
+  padding: var(--s-2);
+  gap: var(--s-2);
+}
+/* ── Mobile drawer ──────────────────────────────────────────────────────── */
+@media (max-width: 45rem) {
+  .app-sidebar {
+    position: fixed;
+    top: var(--topbar-h);
+    bottom: 0;
+    left: 0;
+    width: min(17rem, 82vw);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 160ms ease;
+    box-shadow: var(--shadow-2);
+  }
+  .app-sidebar[data-open='true'] {
+    transform: translateX(0);
+  }
+}
+/* Process workspace */
+/* ── Process header ─────────────────────────────────────────────────────────
+   States which object you are acting on, and carries only the two controls
+   that are used continuously (Restart, Stop/Start). Everything else lives in
+   the Manage tab, one keystroke away, instead of crowding this row.
+   ───────────────────────────────────────────────────────────────────────── */
+.process-header {
+  flex-shrink: 0;
+  padding: var(--s-4) var(--s-5) 0;
+  border-bottom: 0.0625rem solid var(--border);
+}
+.process-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  min-height: 2rem;
+}
+.process-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+/* ── Deployment identity ────────────────────────────────────────────────────
+   States that Hawkeye deployed this process, and from where. Nothing in the
+   app said so before: a deployed process looked exactly like one started by
+   hand on the command line. Clicking it opens the deployment configuration.
+   ───────────────────────────────────────────────────────────────────────── */
+.deploy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.375rem;
+  padding: 0 var(--s-2);
+  flex-shrink: 0;
+  max-width: 22rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.deploy-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-dim);
+}
+.deploy-chip svg {
+  flex-shrink: 0;
+}
+.deploy-chip-repo {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.deploy-chip-branch {
+  flex-shrink: 0;
+  padding: 0 var(--s-1);
+  border-radius: 0.125rem;
+  background: var(--bg-3);
+  font-family: var(--font-mono);
+}
+.process-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+/* ── Inline stat strip ──────────────────────────────────────────────────────
+   VISUAL_DENSITY 7: numbers breathe in plain layout with hairlines, no card
+   boxes. Always visible, so CPU and memory are readable while reading logs.
+   ───────────────────────────────────────────────────────────────────────── */
+.stat-strip {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-5);
+  padding: var(--s-2) 0 var(--s-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  overflow-x: auto;
+}
+.stat-strip-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  white-space: nowrap;
+}
+/* cpu and mem are shortcuts into the Metrics tab, so they are real buttons.
+   They must not read as buttons: same type, one quiet hover cue. */
+.stat-strip-item--link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.stat-strip-item--link .stat-strip-value {
+  text-decoration: underline dotted var(--border-strong);
+  text-underline-offset: 0.25em;
+}
+.stat-strip-item--link:hover .stat-strip-value,
+.stat-strip-item--link:focus-visible .stat-strip-value {
+  color: var(--text);
+  text-decoration-color: var(--accent-line);
+}
+.stat-strip-label {
+  color: var(--muted);
+}
+.stat-strip-value {
+  color: var(--text-dim);
+}
+.stat-strip-empty {
+  padding: var(--s-3) 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+/* ── Header empty state ─────────────────────────────────────────────────── */
+.process-header--empty {
+  display: flex;
+  align-items: center;
+  min-height: 3.5rem;
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 62rem) {
+  .process-header-row {
+    flex-wrap: wrap;
+  }
+  .deploy-chip {
+    order: 3;
+  }
+}
+@media (max-width: 45rem) {
+  .process-header {
+    padding: var(--s-3) var(--s-4) 0;
+  }
+  .process-name {
+    flex: 1;
+  }
+  .process-header-actions {
+    flex-basis: 100%;
+  }
+  .process-header-actions .btn {
+    flex: 1;
+  }
+  .deploy-chip {
+    max-width: 100%;
+  }
+  .stat-strip {
+    gap: var(--s-4);
+  }
+  .process-header-actions .confirm {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--s-2);
+  }
+  .tabs {
+    overflow-x: auto;
+  }
+}
+/* ── Tabs ───────────────────────────────────────────────────────────────────
+   The spine of the redesign. Every process-scoped function now sits behind
+   exactly one of these three, so there is a single place to look for each:
+     Logs    - what is it saying
+     Metrics - how is it behaving
+     Manage  - change it
+   ───────────────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-bottom: -0.0625rem;
+}
+.tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 2.125rem;
+  padding: 0 var(--s-3);
+  border: 0;
+  border-bottom: 0.125rem solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.tab:hover {
+  color: var(--text-dim);
+}
+.tab[aria-selected='true'] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+.tab-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+/* Attention marker on the Manage tab when a process is unmonitored, so the
+   feature is discoverable without a permanent banner taking up a row. */
+.tab-flag {
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+/* ── Tab panel ──────────────────────────────────────────────────────────── */
+.tab-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.tab-panel--scroll {
+  overflow-y: auto;
+  padding: var(--s-5);
+}
+@media (max-width: 45rem) {
+  .tab-panel {
+    overflow: visible;
+  }
+  .tab-panel--scroll {
+    padding: var(--s-4);
+  }
+}
+/* ── Log stream ─────────────────────────────────────────────────────────────
+   The panel had two bars of chrome around it: a toolbar on top (filters,
+   search, icon buttons) and a status footer below (live dot, counts, a fake
+   `tail -f` string). Both are now one toolbar, and the stream gets the rest of
+   the height.
+   ───────────────────────────────────────────────────────────────────────── */
+.log-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.log-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-5);
+  border-bottom: 0.0625rem solid var(--border);
+  flex-shrink: 0;
+}
+/* ── Level filters ──────────────────────────────────────────────────────── */
+.log-filters {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.125rem;
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}
+.log-filter {
+  height: 1.5rem;
+  padding: 0 var(--s-2);
+  border: 0;
+  border-radius: 0.1875rem;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 100ms ease, color 100ms ease;
+}
+.log-filter:hover {
+  color: var(--text-dim);
+}
+.log-filter[aria-pressed='true'] {
+  background: var(--bg-0);
+  color: var(--text);
+}
+.log-filter[aria-pressed='true'][data-level='info'] {
+  color: var(--log-info);
+}
+.log-filter[aria-pressed='true'][data-level='warn'] {
+  color: var(--log-warn);
+}
+.log-filter[aria-pressed='true'][data-level='error'] {
+  color: var(--log-error);
+}
+/* ── Search ─────────────────────────────────────────────────────────────── */
+.log-search {
+  position: relative;
+  flex: 1;
+  max-width: 22rem;
+  min-width: 6rem;
+}
+.log-search .input {
+  height: 1.75rem;
+  padding-left: 1.875rem;
+  font-size: 0.75rem;
+  background: var(--bg-2);
+}
+.log-search-icon {
+  position: absolute;
+  left: var(--s-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+/* ── Status + actions on the right of the same bar ──────────────────────── */
+.log-toolbar-status {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+  font-size: 0.6875rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.log-status-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--success);
+}
+.log-status-dot[data-paused='true'] {
+  background: var(--warning);
+}
+.log-count {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.log-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+/* ── Stream ─────────────────────────────────────────────────────────────── */
+.log-stream-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.log-stream {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--s-2) 0;
+  background: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+.log-line {
+  display: grid;
+  grid-template-columns: 4.25rem 2.25rem minmax(0, 1fr);
+  gap: var(--s-2);
+  padding: 0 var(--s-5) 0 var(--s-4);
+  border-left: 0.125rem solid transparent;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1.25rem;
+}
+.log-line:hover {
+  background: var(--bg-1);
+}
+.log-line.level-error {
+  border-left-color: var(--log-error);
+}
+.log-line.level-error .log-text {
+  color: var(--log-error);
+}
+.log-line.level-warn {
+  border-left-color: var(--log-warn);
+}
+.log-line.level-warn .log-text {
+  color: var(--log-warn);
+}
+.log-line.level-info .log-text {
+  color: var(--log-default);
+}
+.log-load-older {
+  display: flex;
+  justify-content: center;
+  padding: var(--s-2) var(--s-4) var(--s-3);
+}
+.log-time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  user-select: none;
+}
+.log-level-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  align-self: center;
+  border-radius: 0.125rem;
+  color: var(--muted);
+  user-select: none;
+}
+.log-level-badge--info {
+  color: var(--log-info);
+}
+.log-level-badge--warn {
+  color: var(--log-warn);
+}
+.log-level-badge--error {
+  color: var(--log-error);
+}
+.log-level-badge--spacer {
+  visibility: hidden;
+}
+.log-text {
+  color: var(--log-default);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-width: 0;
+}
+/* ── New lines pill ─────────────────────────────────────────────────────── */
+.new-logs-pill {
+  position: absolute;
+  bottom: var(--s-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.75rem;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--accent-line);
+  background: var(--bg-2);
+  box-shadow: var(--shadow-2);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 3;
+}
+.new-logs-pill:hover {
+  background: var(--accent-soft);
+}
+.log-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-0);
+}
+@media (max-width: 45rem) {
+  .log-toolbar {
+    flex-wrap: wrap;
+    padding: var(--s-2) var(--s-4);
+  }
+  .log-search {
+    order: 3;
+    max-width: none;
+    flex-basis: 100%;
+  }
+  .log-line {
+    grid-template-columns: 3.75rem 2rem minmax(0, 1fr);
+    padding: 0 var(--s-3) 0 var(--s-2);
+  }
+  .log-stream {
+    max-height: 60vh;
+  }
+}
+/* ── Metrics panel ──────────────────────────────────────────────────────────
+   Charts are always drawn. The old design hid every sparkline behind a click
+   and allowed only one open at a time, which made trends invisible by default
+   and comparison impossible.
+   ───────────────────────────────────────────────────────────────────────── */
+.metrics-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+.metrics-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+  padding-bottom: var(--s-2);
+  border-bottom: 0.0625rem solid var(--border);
+}
+/* One chart per row. Side by side, three to a row, each curve was a few
+   hundred pixels wide and a 24-hour window collapsed into an unreadable smear;
+   full width buys the horizontal resolution the time axis needs. */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+}
+.metrics-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border: 0.0625rem solid var(--accent-line);
+  border-radius: var(--r-2);
+  background: var(--accent-soft);
+}
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-2);
+}
+.metric-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.metric-card-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.metric-card-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.metric-card-chart {
+  /* Taller than the old three-up cards: a full-width chart needs the vertical
+     room to stay in proportion. */
+  height: 8rem;
+  margin: 0 calc(var(--s-1) * -1);
+}
+.metric-card-foot {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+/* Placeholder that keeps the card's height so the grid does not reflow when
+   history arrives. */
+.metric-card-nodata {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  border: 0.0625rem dashed var(--border);
+  border-radius: var(--r-1);
+}
+/* Skeleton shown while the first metrics request is in flight. */
+.metric-card-skeleton {
+  height: 4.5rem;
+  border-radius: var(--r-1);
+  background: linear-gradient(90deg, var(--bg-3) 25%, var(--bg-2) 50%, var(--bg-3) 75%);
+  background-size: 200% 100%;
+  animation: metric-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes metric-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .metric-card-skeleton {
+    animation: none;
+    background: var(--bg-3);
+  }
+}
+/* ── Sparkline internals ────────────────────────────────────────────────── */
+.sparkline-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.sparkline-tooltip {
+  position: absolute;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  padding: 0.125rem var(--s-2);
+  border-radius: var(--r-1);
+  background: var(--bg-0);
+  border: 0.0625rem solid var(--border-strong);
+  box-shadow: var(--shadow-1);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+.sparkline-tooltip-value {
+  color: var(--text);
+  font-weight: 600;
+}
+.sparkline-tooltip-time {
+  color: var(--muted);
+}
+/* ── Manage panel ───────────────────────────────────────────────────────────
+   The single home for every function that changes a process: monitoring,
+   alerting, PM2 custom actions, deployment config, and destructive actions.
+   These used to be spread across a strip, a dropdown, the header row and the
+   sidebar.
+
+   Sections are separated by hairlines and headings rather than nested cards,
+   so the panel reads as one document instead of a pile of boxes.
+   ───────────────────────────────────────────────────────────────────────── */
+.manage-panel {
+  display: flex;
+  flex-direction: column;
+  max-width: 46rem;
+}
+.manage-section {
+  padding: var(--s-5) 0;
+  border-bottom: 0.0625rem solid var(--border);
+}
+.manage-section:first-child {
+  padding-top: 0;
+}
+.manage-section:last-child {
+  border-bottom: 0;
+}
+.manage-section-head {
+  margin-bottom: var(--s-3);
+}
+.manage-section-title {
+  margin: 0 0 var(--s-1);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+/* ── Row: label + description on the left, control on the right ─────────── */
+.manage-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding: var(--s-3) 0;
+}
+.manage-row + .manage-row {
+  border-top: 0.0625rem solid var(--border);
+}
+.manage-row-text {
+  min-width: 0;
+  flex: 1;
+}
+.manage-row-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-1);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.manage-row-control {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+  min-height: 2rem;
+}
+/* ── What monitoring buys you ───────────────────────────────────────────────
+   Stated once, in the place where the switch lives, instead of a permanent
+   banner above the logs.
+   ───────────────────────────────────────────────────────────────────────── */
+.manage-benefits {
+  display: grid;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+  padding: var(--s-3) var(--s-4);
+  list-style: none;
+  border-radius: var(--r-2);
+  background: var(--bg-2);
+}
+.manage-benefits li {
+  display: grid;
+  grid-template-columns: 0.875rem 1fr;
+  gap: var(--s-2);
+  align-items: start;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.manage-benefits svg {
+  margin-top: 0.1875rem;
+  color: var(--accent);
+}
+/* ── PM2 custom actions ─────────────────────────────────────────────────────
+   Rendered as a list of named buttons. The old design hid them inside a
+   <select>, the only dropdown in the app, which read as a filter rather than
+   as a set of triggers.
+   ───────────────────────────────────────────────────────────────────────── */
+.action-list {
+  display: grid;
+  gap: var(--s-1);
+}
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+}
+.action-row-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.action-row-form {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: 1;
+}
+.action-row-form .input {
+  height: 1.625rem;
+  font-size: 0.75rem;
+}
+.action-result {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--success-soft);
+  color: var(--success);
+  font-size: 0.75rem;
+}
+.action-result[data-ok='false'] {
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+/* ── Danger zone ────────────────────────────────────────────────────────── */
+.manage-section--danger .manage-section-title {
+  color: var(--critical);
+}
+/* ── Log level picker ───────────────────────────────────────────────────────
+   One button per level rather than a dropdown, matching the custom-action
+   rows: every level is visible without opening anything, and the active one
+   reads at a glance. `silent` is dimmed because it stops output entirely.
+   ───────────────────────────────────────────────────────────────────────── */
+.level-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  justify-content: flex-end;
+}
+.level-picker .btn[data-active='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.level-picker .btn[data-quiet='true'] {
+  margin-left: var(--s-2);
+  color: var(--muted);
+}
+/* Overlays */
+/* ── Overlays ───────────────────────────────────────────────────────────────
+   One overlay and one modal shell shared by Settings and Deploy. Both used to
+   ship their own backdrop, header and close button at different sizes.
+   ───────────────────────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-6);
+  background: rgba(6, 6, 8, 0.72);
+  animation: fade-in 120ms ease both;
+}
+.modal {
+  display: flex;
+  width: 100%;
+  max-width: 60rem;
+  max-height: min(46rem, 100%);
+  min-height: 0;
+  overflow: hidden;
+  border: 0.0625rem solid var(--border-strong);
+  border-radius: var(--r-2);
+  background: var(--bg-1);
+  box-shadow: var(--shadow-2);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  height: 3rem;
+  padding: 0 var(--s-3) 0 var(--s-5);
+  border-bottom: 0.0625rem solid var(--border);
+}
+.modal-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+/* ── Settings ───────────────────────────────────────────────────────────── */
+.modal--settings {
+  flex-direction: row;
+}
+.settings-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: 13rem;
+  flex-shrink: 0;
+  padding: var(--s-3);
+  border-right: 0.0625rem solid var(--border);
+  background: var(--bg-0);
+}
+.settings-sidebar-title {
+  padding: var(--s-2) var(--s-2) var(--s-3);
+}
+.settings-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  padding: var(--s-2) var(--s-3);
+  border: 0;
+  border-radius: var(--r-1);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+.settings-nav-item:hover {
+  background: var(--bg-2);
+}
+.settings-nav-item.active {
+  background: var(--bg-3);
+}
+.settings-nav-item.active .settings-nav-label {
+  color: var(--text);
+}
+.settings-nav-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.settings-nav-desc {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.settings-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s-5);
+}
+/* ── Settings page content ──────────────────────────────────────────────── */
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  max-width: 36rem;
+}
+.settings-page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.settings-page-title {
+  margin: 0;
+  font-size: 1rem;
+}
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.settings-group-title {
+  margin: 0;
+  padding-bottom: var(--s-2);
+  border-bottom: 0.0625rem solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.settings-group-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+/* The raw env key stays visible so the file on disk is still findable, but as
+   secondary information rather than as the label. */
+.settings-group-fields code {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+  background: var(--bg-2);
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.125rem;
+}
+.settings-unit {
+  margin-left: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.settings-actions {
+  display: flex;
+  gap: var(--s-2);
+  padding-top: var(--s-2);
+}
+.settings-notice {
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border);
+  background: var(--bg-2);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+.settings-notice--success {
+  border-color: transparent;
+  background: var(--success-soft);
+  color: var(--success);
+}
+.settings-notice--error {
+  border-color: transparent;
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+.settings-skeleton {
+  height: 3.25rem;
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+}
+/* ── Choices ────────────────────────────────────────────────────────────── */
+.choice-list {
+  display: grid;
+  gap: var(--s-2);
+}
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  cursor: pointer;
+}
+.choice:hover {
+  border-color: var(--border-strong);
+}
+.choice:has(input:checked) {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.choice input {
+  margin-top: 0.1875rem;
+  accent-color: var(--accent);
+}
+.choice strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.875rem;
+  padding: 0 var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.checkbox input {
+  accent-color: var(--accent);
+}
+.checkbox:has(input:checked) {
+  border-color: var(--accent-line);
+  color: var(--text);
+}
+/* ── Key/value editors ──────────────────────────────────────────────────── */
+.kv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 1.75rem;
+  gap: var(--s-2);
+  align-items: center;
+}
+.input-suffix {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.input-suffix .input {
+  flex: 1;
+}
+.input-suffix > span {
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.template-vars {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-2) var(--s-3);
+  margin: 0;
+  padding: var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.75rem;
+}
+.template-vars dt {
+  margin: 0;
+}
+.template-vars dd {
+  margin: 0;
+  color: var(--muted);
+}
+.code-preview {
+  margin: 0;
+  padding: var(--s-3);
+  overflow-x: auto;
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+  white-space: pre;
+}
+.reporter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.reporter-head .settings-group-title {
+  flex: 1;
+}
+.test-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.test-row .action-result {
+  margin-top: 0;
+}
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 45rem) {
+  .overlay {
+    padding: 0;
+  }
+  .modal {
+    max-width: none;
+    max-height: none;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+  .modal--settings {
+    flex-direction: column;
+  }
+  .settings-sidebar {
+    flex-direction: row;
+    width: auto;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 0.0625rem solid var(--border);
+  }
+  .settings-sidebar-title,
+  .settings-nav-desc {
+    display: none;
+  }
+  .settings-body {
+    padding: var(--s-4);
+  }
+  .kv-row {
+    grid-template-columns: minmax(0, 1fr) 1.75rem;
+  }
+  .kv-row .input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+/* ── Deploy modal ───────────────────────────────────────────────────────────
+   One scrolling form instead of an eight-step wizard. The three genuinely
+   required fields sit at the top; everything else folds away behind a summary
+   line that states its current value, so the form can be read at a glance
+   without opening anything.
+   ───────────────────────────────────────────────────────────────────────── */
+.modal--deploy {
+  flex-direction: column;
+  max-width: 44rem;
+}
+.deploy-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.deploy-required {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding-bottom: var(--s-5);
+  border-bottom: 0.0625rem solid var(--border);
+}
+.deploy-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+/* ── Collapsible groups ─────────────────────────────────────────────────── */
+.deploy-fieldset {
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-2);
+}
+.deploy-fieldset > summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--r-2);
+}
+.deploy-fieldset > summary::-webkit-details-marker {
+  display: none;
+}
+.deploy-fieldset > summary:hover .deploy-fieldset-title {
+  color: var(--text);
+}
+.deploy-fieldset[open] > summary {
+  border-bottom: 0.0625rem solid var(--border);
+  border-radius: var(--r-2) var(--r-2) 0 0;
+}
+.deploy-fieldset-title {
+  position: relative;
+  padding-left: var(--s-4);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.deploy-fieldset-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3125rem;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-right: 0.09375rem solid var(--muted);
+  border-bottom: 0.09375rem solid var(--muted);
+  transform: rotate(-45deg);
+  transition: transform 120ms ease;
+}
+.deploy-fieldset[open] .deploy-fieldset-title::before {
+  transform: rotate(45deg);
+}
+.deploy-fieldset-summary {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: right;
+}
+.deploy-fieldset-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-4);
+}
+.deploy-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+/* ── Modal footer: the action bar is always visible ─────────────────────── */
+.modal-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  padding: var(--s-3) var(--s-5);
+  border-top: 0.0625rem solid var(--border);
+  background: var(--bg-1);
+}
+.modal-footer-spacer {
+  flex: 1;
+}
+/* ── Progress view ──────────────────────────────────────────────────────── */
+.deploy-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+.deploy-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.625rem;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.deploy-stage.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.deploy-stage.is-done {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.deploy-stage.is-error {
+  background: var(--critical-soft);
+  color: var(--critical);
+}
+.deploy-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 14rem;
+  max-height: 26rem;
+  overflow-y: auto;
+  padding: var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.deploy-log-line--error {
+  color: var(--critical);
+}
+.deploy-log-waiting {
+  color: var(--muted);
+}
+.deploy-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 0.0625rem solid var(--warning-soft);
+  border-radius: var(--r-2);
+  background: var(--warning-soft);
+}
+.deploy-confirm p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text);
+}
+.deploy-confirm code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.deploy-confirm-actions {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 45rem) {
+  .deploy-body {
+    padding: var(--s-4);
+  }
+  .deploy-two-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .modal-footer {
+    padding: var(--s-3) var(--s-4);
+    flex-wrap: wrap;
+  }
+}
+/* ── Update banner ──────────────────────────────────────────────────────────
+   Pill anchored to the bottom-right that expands into the release notes.
+   The pill used to carry a triple outer glow and an infinitely pulsing dot,
+   which pulled the eye away from live log output for a notice that is never
+   urgent.
+   ────────────────────────────────────────────────────────────────────────── */
+.update-root {
+  position: fixed;
+  bottom: calc(var(--footer-h) + var(--s-3));
+  right: var(--s-4);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s-2);
+}
+.update-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.875rem;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--accent-line);
+  background: var(--bg-2);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--shadow-2);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.update-pill:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.update-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.update-panel {
+  width: 26rem;
+  max-width: calc(100vw - var(--s-8));
+  max-height: min(32rem, 70vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-2);
+  border: 0.0625rem solid var(--border-strong);
+  background: var(--bg-1);
+  box-shadow: var(--shadow-2);
+  animation: fade-in 140ms ease both;
+}
+.update-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 0.0625rem solid var(--border);
+}
+.update-panel-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.update-panel-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 1.125rem;
+  padding: 0 var(--s-2);
+  border-radius: var(--r-1);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+.update-panel-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+.update-panel-link {
+  color: var(--text-dim);
+  text-decoration: none;
+}
+.update-panel-link:hover {
+  color: var(--accent);
+}
+.update-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-4);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.update-panel-body h4,
+.update-panel-body h5 {
+  margin: var(--s-4) 0 var(--s-2);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.update-panel-body h4:first-child,
+.update-panel-body h5:first-child {
+  margin-top: 0;
+}
+.update-panel-body ul {
+  margin: var(--s-1) 0 var(--s-3);
+  padding-left: var(--s-5);
+}
+.update-panel-body li {
+  margin-bottom: var(--s-1);
+}
+.update-panel-body p {
+  margin: 0 0 var(--s-2);
+}
+.update-panel-body p:last-child {
+  margin-bottom: 0;
+}
+.update-panel-body code {
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.125rem;
+  background: var(--bg-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+}
+.update-panel-body a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.update-panel-body a:hover {
+  text-decoration: underline;
+}
+.update-panel-body strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.update-empty {
+  color: var(--muted);
+}
+.update-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  flex-shrink: 0;
+  padding: var(--s-3) var(--s-4);
+  border-top: 0.0625rem solid var(--border);
+}
+.update-cta {
+  text-decoration: none;
+}
+@media (max-width: 45rem) {
+  .update-root {
+    right: var(--s-3);
+    bottom: var(--s-3);
+  }
+}
+/* Standalone pages */
+/* ── Sign-in page ───────────────────────────────────────────────────────── */
+.login-page {
+  min-height: 100dvh;
+  background: var(--bg-0);
+}
+.login-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--s-6);
+}
+.login-panel {
+  width: min(100%, 50rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-1);
+  box-shadow: var(--shadow-2);
+  animation: fade-in 180ms ease both;
+}
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-3);
+  padding: var(--s-10) var(--s-8);
+  background: var(--bg-2);
+  border-right: 0.0625rem solid var(--border);
+}
+.login-brand h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+.login-brand .brand-pm2 {
+  color: var(--accent);
+}
+.login-brand .brand-hawkeye {
+  color: var(--text);
+}
+.login-brand .subtle {
+  font-size: 0.8125rem;
+}
+.login-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--r-1);
+  background: var(--accent-soft);
+}
+.login-form-side {
+  padding: var(--s-10) var(--s-8);
+}
+.login-form-side h2 {
+  margin: 0 0 var(--s-1);
+  font-size: 1.125rem;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+}
+.login-submit {
+  height: 2.375rem;
+  margin-top: var(--s-1);
+}
+.login-message {
+  margin: 0;
+  min-height: 2.5em;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.login-message--error {
+  color: var(--critical);
+}
+.login-message--success {
+  color: var(--success);
+}
+@media (max-width: 43.75rem) {
+  .login-shell {
+    padding: var(--s-4);
+  }
+  .login-panel {
+    grid-template-columns: 1fr;
+  }
+  .login-brand {
+    border-right: 0;
+    border-bottom: 0.0625rem solid var(--border);
+    padding: var(--s-6);
+  }
+  .login-form-side {
+    padding: var(--s-6);
+  }
+}

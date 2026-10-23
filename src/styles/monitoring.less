@@ -1,0 +1,191 @@
+/* ── Manage panel ───────────────────────────────────────────────────────────
+   The single home for every function that changes a process: monitoring,
+   alerting, PM2 custom actions, deployment config, and destructive actions.
+   These used to be spread across a strip, a dropdown, the header row and the
+   sidebar.
+
+   Sections are separated by hairlines and headings rather than nested cards,
+   so the panel reads as one document instead of a pile of boxes.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.manage-panel {
+  display: flex;
+  flex-direction: column;
+  max-width: 46rem;
+}
+
+.manage-section {
+  padding: var(--s-5) 0;
+  border-bottom: 0.0625rem solid var(--border);
+
+  &:first-child { padding-top: 0; }
+  &:last-child { border-bottom: 0; }
+}
+
+.manage-section-head {
+  margin-bottom: var(--s-3);
+}
+
+.manage-section-title {
+  margin: 0 0 var(--s-1);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Row: label + description on the left, control on the right ─────────── */
+
+.manage-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-5);
+  padding: var(--s-3) 0;
+
+  & + .manage-row {
+    border-top: 0.0625rem solid var(--border);
+  }
+}
+
+.manage-row-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.manage-row-label {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-1);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.manage-row-control {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+  min-height: 2rem;
+}
+
+/* ── What monitoring buys you ───────────────────────────────────────────────
+   Stated once, in the place where the switch lives, instead of a permanent
+   banner above the logs.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.manage-benefits {
+  display: grid;
+  gap: var(--s-2);
+  margin: var(--s-3) 0 0;
+  padding: var(--s-3) var(--s-4);
+  list-style: none;
+  border-radius: var(--r-2);
+  background: var(--bg-2);
+
+  li {
+    display: grid;
+    grid-template-columns: 0.875rem 1fr;
+    gap: var(--s-2);
+    align-items: start;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  svg {
+    margin-top: 0.1875rem;
+    color: var(--accent);
+  }
+}
+
+/* ── PM2 custom actions ─────────────────────────────────────────────────────
+   Rendered as a list of named buttons. The old design hid them inside a
+   <select>, the only dropdown in the app, which read as a filter rather than
+   as a set of triggers.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.action-list {
+  display: grid;
+  gap: var(--s-1);
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+}
+
+.action-row-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-row-form {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex: 1;
+
+  .input {
+    height: 1.625rem;
+    font-size: 0.75rem;
+  }
+}
+
+.action-result {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--success-soft);
+  color: var(--success);
+  font-size: 0.75rem;
+
+  &[data-ok='false'] {
+    background: var(--critical-soft);
+    color: var(--critical);
+  }
+}
+
+/* ── Danger zone ────────────────────────────────────────────────────────── */
+
+.manage-section--danger {
+  .manage-section-title {
+    color: var(--critical);
+  }
+}
+
+/* ── Log level picker ───────────────────────────────────────────────────────
+   One button per level rather than a dropdown, matching the custom-action
+   rows: every level is visible without opening anything, and the active one
+   reads at a glance. `silent` is dimmed because it stops output entirely.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.level-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  justify-content: flex-end;
+
+  .btn[data-active='true'] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn[data-quiet='true'] {
+    margin-left: var(--s-2);
+    color: var(--muted);
+  }
+}

@@ -1,0 +1,302 @@
+/* ── Layout shell ───────────────────────────────────────────────────────────
+   Three fixed regions: topbar (global), sidebar (choose an object), content
+   (act on it). Predictable grid, DESIGN_VARIANCE 3 - an ops tool must never
+   move its furniture.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr) var(--footer-h);
+  height: 100vh;
+  background: var(--bg-0);
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────────── */
+
+.app-topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-width: 0;
+  height: var(--topbar-h);
+  padding: 0 var(--s-4);
+  background: var(--bg-1);
+  border-bottom: 0.0625rem solid var(--border);
+  z-index: 20;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.topbar-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border-radius: var(--r-1);
+  background: var(--accent-soft);
+
+  svg { display: block; }
+}
+
+.topbar-brand-wordmark {
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+
+  .brand-pm2 { color: var(--accent); }
+  .brand-hawkeye { color: var(--text); }
+}
+
+.topbar-spacer {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-shrink: 0;
+}
+
+.topbar-divider {
+  width: 0.0625rem;
+  height: 1.25rem;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.topbar-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--bg-2);
+    color: var(--text);
+  }
+}
+
+.topbar-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: var(--topbar-h) 0 0 0;
+  background: rgba(6, 6, 8, 0.6);
+  z-index: 40;
+}
+
+/* ── Connection state ───────────────────────────────────────────────────────
+   The websocket is the app's single transport. When it drops, every number on
+   screen is stale, so the state is stated rather than hidden.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.conn-state {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 0 var(--s-2);
+  font-size: 0.75rem;
+  color: var(--muted);
+  white-space: nowrap;
+
+  &[data-connected='false'] {
+    color: var(--warning);
+  }
+}
+
+.conn-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--success);
+
+  .conn-state[data-connected='false'] & {
+    background: var(--warning);
+  }
+}
+
+/* ── Content column ─────────────────────────────────────────────────────── */
+
+.content {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg-1);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+
+.app-footer {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--footer-h);
+  padding: 0 var(--s-4);
+  background: var(--bg-1);
+  border-top: 0.0625rem solid var(--border);
+  color: var(--muted);
+  font-size: 0.6875rem;
+  z-index: 10;
+}
+
+.app-footer-version {
+  font-family: var(--font-mono);
+}
+
+.app-footer-credit a {
+  color: var(--text-dim);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+/* ── Welcome state ──────────────────────────────────────────────────────── */
+
+.welcome-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-8) var(--s-6);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.welcome-card {
+  max-width: 30rem;
+
+  h2 {
+    margin: 0 0 var(--s-2);
+    font-size: 1.125rem;
+  }
+}
+
+.welcome-hints {
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 0.0625rem solid var(--border);
+}
+
+.welcome-hints-title {
+  margin: 0 0 var(--s-3);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+.welcome-hints-list {
+  display: grid;
+  gap: var(--s-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 1.25rem 1fr;
+    gap: var(--s-2);
+    font-size: 0.8125rem;
+    color: var(--muted);
+
+    strong {
+      display: block;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+  }
+}
+
+.welcome-hint-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.25rem;
+  color: var(--accent);
+}
+
+/* ── Responsive: mobile (<= 45rem / 720 px) ─────────────────────────────── */
+
+@media (max-width: 45rem) {
+  // minmax(0, 1fr) rather than 1fr: an fr track takes min-content as its
+  // automatic minimum, so a wide toolbar would push the whole shell past the
+  // viewport instead of forcing its own children to shrink.
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .topbar-menu-btn { display: flex; }
+  .topbar-drawer-overlay { display: block; }
+
+  .app-topbar {
+    position: sticky;
+    top: 0;
+    gap: var(--s-2);
+    padding: 0 var(--s-2);
+  }
+
+  .content {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+  }
+
+  // Icon-only at this width; the label is the first thing worth dropping.
+  .topbar-actions .btn--primary span,
+  .topbar-brand-wordmark,
+  .topbar-divider {
+    display: none;
+  }
+
+  .conn-state {
+    padding: 0;
+
+    span:not(.conn-dot) { display: none; }
+  }
+
+  .app-footer {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.125rem;
+    height: auto;
+    padding: var(--s-2) var(--s-4);
+  }
+}
+
+/* ── Short desktop viewports ────────────────────────────────────────────── */
+
+@media (min-width: 45.0625rem) and (max-height: 40rem) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    grid-template-rows: var(--topbar-h) auto var(--footer-h);
+  }
+}

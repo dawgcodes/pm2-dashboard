@@ -1,0 +1,403 @@
+/* ── Overlays ───────────────────────────────────────────────────────────────
+   One overlay and one modal shell shared by Settings and Deploy. Both used to
+   ship their own backdrop, header and close button at different sizes.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-6);
+  background: rgba(6, 6, 8, 0.72);
+  animation: fade-in 120ms ease both;
+}
+
+.modal {
+  display: flex;
+  width: 100%;
+  max-width: 60rem;
+  max-height: min(46rem, 100%);
+  min-height: 0;
+  overflow: hidden;
+  border: 0.0625rem solid var(--border-strong);
+  border-radius: var(--r-2);
+  background: var(--bg-1);
+  box-shadow: var(--shadow-2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  height: 3rem;
+  padding: 0 var(--s-3) 0 var(--s-5);
+  border-bottom: 0.0625rem solid var(--border);
+}
+
+.modal-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Settings ───────────────────────────────────────────────────────────── */
+
+.modal--settings {
+  flex-direction: row;
+}
+
+.settings-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: 13rem;
+  flex-shrink: 0;
+  padding: var(--s-3);
+  border-right: 0.0625rem solid var(--border);
+  background: var(--bg-0);
+}
+
+.settings-sidebar-title {
+  padding: var(--s-2) var(--s-2) var(--s-3);
+}
+
+.settings-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  padding: var(--s-2) var(--s-3);
+  border: 0;
+  border-radius: var(--r-1);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+
+  &:hover {
+    background: var(--bg-2);
+  }
+
+  &.active {
+    background: var(--bg-3);
+
+    .settings-nav-label {
+      color: var(--text);
+    }
+  }
+}
+
+.settings-nav-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.settings-nav-desc {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+
+.settings-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s-5);
+}
+
+/* ── Settings page content ──────────────────────────────────────────────── */
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  max-width: 36rem;
+}
+
+.settings-page-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.settings-page-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.settings-group-title {
+  margin: 0;
+  padding-bottom: var(--s-2);
+  border-bottom: 0.0625rem solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.settings-group-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+/* The raw env key stays visible so the file on disk is still findable, but as
+   secondary information rather than as the label. */
+.settings-group-fields code {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--muted);
+  background: var(--bg-2);
+  padding: 0.0625rem 0.25rem;
+  border-radius: 0.125rem;
+}
+
+.settings-unit {
+  margin-left: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.settings-actions {
+  display: flex;
+  gap: var(--s-2);
+  padding-top: var(--s-2);
+}
+
+.settings-notice {
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-1);
+  border: 0.0625rem solid var(--border);
+  background: var(--bg-2);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+
+  &--success {
+    border-color: transparent;
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  &--error {
+    border-color: transparent;
+    background: var(--critical-soft);
+    color: var(--critical);
+  }
+}
+
+.settings-skeleton {
+  height: 3.25rem;
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+}
+
+/* ── Choices ────────────────────────────────────────────────────────────── */
+
+.choice-list {
+  display: grid;
+  gap: var(--s-2);
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--border-strong);
+  }
+
+  &:has(input:checked) {
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+  }
+
+  input {
+    margin-top: 0.1875rem;
+    accent-color: var(--accent);
+  }
+
+  strong {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.875rem;
+  padding: 0 var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.8125rem;
+  cursor: pointer;
+
+  input {
+    accent-color: var(--accent);
+  }
+
+  &:has(input:checked) {
+    border-color: var(--accent-line);
+    color: var(--text);
+  }
+}
+
+/* ── Key/value editors ──────────────────────────────────────────────────── */
+
+.kv-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 1.75rem;
+  gap: var(--s-2);
+  align-items: center;
+}
+
+.input-suffix {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+
+  .input {
+    flex: 1;
+  }
+
+  > span {
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+}
+
+.template-vars {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-2) var(--s-3);
+  margin: 0;
+  padding: var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.75rem;
+
+  dt { margin: 0; }
+
+  dd {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+
+.code-preview {
+  margin: 0;
+  padding: var(--s-3);
+  overflow-x: auto;
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-1);
+  background: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+  white-space: pre;
+}
+
+.reporter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+
+  .settings-group-title {
+    flex: 1;
+  }
+}
+
+.test-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+
+  .action-result {
+    margin-top: 0;
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 45rem) {
+  .overlay {
+    padding: 0;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: none;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .modal--settings {
+    flex-direction: column;
+  }
+
+  .settings-sidebar {
+    flex-direction: row;
+    width: auto;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 0.0625rem solid var(--border);
+  }
+
+  .settings-sidebar-title,
+  .settings-nav-desc {
+    display: none;
+  }
+
+  .settings-body {
+    padding: var(--s-4);
+  }
+
+  .kv-row {
+    grid-template-columns: minmax(0, 1fr) 1.75rem;
+
+    .input:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+}

@@ -1,0 +1,237 @@
+/* ── Deploy modal ───────────────────────────────────────────────────────────
+   One scrolling form instead of an eight-step wizard. The three genuinely
+   required fields sit at the top; everything else folds away behind a summary
+   line that states its current value, so the form can be read at a glance
+   without opening anything.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.modal--deploy {
+  flex-direction: column;
+  max-width: 44rem;
+}
+
+.deploy-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.deploy-required {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding-bottom: var(--s-5);
+  border-bottom: 0.0625rem solid var(--border);
+}
+
+.deploy-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+/* ── Collapsible groups ─────────────────────────────────────────────────── */
+
+.deploy-fieldset {
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-2);
+
+  > summary {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    cursor: pointer;
+    list-style: none;
+    border-radius: var(--r-2);
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &:hover .deploy-fieldset-title {
+      color: var(--text);
+    }
+  }
+
+  &[open] > summary {
+    border-bottom: 0.0625rem solid var(--border);
+    border-radius: var(--r-2) var(--r-2) 0 0;
+  }
+}
+
+.deploy-fieldset-title {
+  position: relative;
+  padding-left: var(--s-4);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-dim);
+
+  // Disclosure caret drawn from borders, so no icon is needed inside <summary>.
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.3125rem;
+    width: 0.3125rem;
+    height: 0.3125rem;
+    border-right: 0.09375rem solid var(--muted);
+    border-bottom: 0.09375rem solid var(--muted);
+    transform: rotate(-45deg);
+    transition: transform 120ms ease;
+  }
+
+  .deploy-fieldset[open] &::before {
+    transform: rotate(45deg);
+  }
+}
+
+.deploy-fieldset-summary {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: right;
+}
+
+.deploy-fieldset-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-4);
+}
+
+.deploy-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+/* ── Modal footer: the action bar is always visible ─────────────────────── */
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-shrink: 0;
+  padding: var(--s-3) var(--s-5);
+  border-top: 0.0625rem solid var(--border);
+  background: var(--bg-1);
+}
+
+.modal-footer-spacer {
+  flex: 1;
+}
+
+/* ── Progress view ──────────────────────────────────────────────────────── */
+
+.deploy-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+.deploy-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: 1.625rem;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-1);
+  background: var(--bg-2);
+  font-size: 0.75rem;
+  color: var(--muted);
+
+  &.is-active {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  &.is-done {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  &.is-error {
+    background: var(--critical-soft);
+    color: var(--critical);
+  }
+}
+
+.deploy-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 14rem;
+  max-height: 26rem;
+  overflow-y: auto;
+  padding: var(--s-3);
+  border: 0.0625rem solid var(--border);
+  border-radius: var(--r-2);
+  background: var(--bg-0);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.7;
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.deploy-log-line--error {
+  color: var(--critical);
+}
+
+.deploy-log-waiting {
+  color: var(--muted);
+}
+
+.deploy-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border: 0.0625rem solid var(--warning-soft);
+  border-radius: var(--r-2);
+  background: var(--warning-soft);
+
+  p {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+}
+
+.deploy-confirm-actions {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 45rem) {
+  .deploy-body {
+    padding: var(--s-4);
+  }
+
+  .deploy-two-col {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .modal-footer {
+    padding: var(--s-3) var(--s-4);
+    flex-wrap: wrap;
+  }
+}

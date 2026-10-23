@@ -1,0 +1,76 @@
+/* ── Host health readout ────────────────────────────────────────────────────
+   Was three buttons in the topbar, each opening its own popover with a chart.
+   Now it states the numbers and nothing else: the charts live in the Metrics
+   tab, which is where a user goes to look at trends.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.host-readout {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding-left: var(--s-2);
+  min-width: 0;
+}
+
+.host-readout-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.host-stat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  white-space: nowrap;
+}
+
+/* Same shortcut idiom as the process stat strip: a button that reads as text. */
+.host-stat--link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  .host-stat-value {
+    text-decoration: underline dotted var(--border-strong);
+    text-underline-offset: 0.25em;
+  }
+
+  &:hover .host-stat-value,
+  &:focus-visible .host-stat-value {
+    color: var(--text);
+    text-decoration-color: var(--accent-line);
+  }
+}
+
+.host-stat-label {
+  font-size: 0.6875rem;
+  color: var(--muted);
+}
+
+.host-stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+
+  /* Pressure is a real signal, so it is allowed to colour the number. */
+  &[data-level='warn'] { color: var(--warning); }
+  &[data-level='critical'] { color: var(--critical); }
+}
+
+@media (max-width: 60rem) {
+  .host-readout-label { display: none; }
+  .host-readout { gap: var(--s-3); }
+}
+
+@media (max-width: 45rem) {
+  .host-readout { display: none; }
+}
