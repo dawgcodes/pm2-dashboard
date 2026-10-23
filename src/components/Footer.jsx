@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 by Christian Kellner.
+ * Copyright (c) 2026 by dawgcodes.
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
 
@@ -15,7 +15,7 @@ export default function Footer({ version }) {
   return (
     <footer className="app-footer">
       <span className="app-footer-version">
-        pm2-hawkeye
+        pm2-dawgcodes-dashboard
         {version && (
           <>
             {' '}
