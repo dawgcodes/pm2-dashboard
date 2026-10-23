@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 by Christian Kellner.
+ * Copyright (c) 2026 by dawgcodes.
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
 
@@ -878,13 +878,13 @@ export default function App() {
             <List size={15} weight="bold" />
           </button>
 
-          <a className="topbar-brand" href="/" aria-label="pm2-hawkeye home">
+          <a className="topbar-brand" href="/" aria-label="pm2-dawgcodes-dashboard home">
             <span className="topbar-brand-logo">
               <Eye size={15} weight="bold" color="var(--accent)" />
             </span>
             <span className="topbar-brand-wordmark">
               <span className="brand-pm2">pm2</span>
-              <span className="brand-hawkeye">-hawkeye</span>
+              <span className="brand-dawgcodes-dashboard">-dawgcodes-dashboard</span>
             </span>
           </a>
 
