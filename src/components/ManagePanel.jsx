@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 by Christian Kellner.
+ * Copyright (c) 2026 by dawgcodes.
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
 
@@ -157,7 +157,7 @@ export default function ManagePanel({
               </p>
               {logLevel.supported === false && (
                 <p className="hint">
-                  {name} did not answer. It needs the Hawkeye log-level listener, see the README for the snippet.
+                  {name} did not answer. It needs the dawgcodes-dashboard log-level listener, see the README for the snippet.
                 </p>
               )}
             </div>
@@ -246,14 +246,14 @@ export default function ManagePanel({
               <div className="manage-row-text">
                 <p className="manage-row-label">Orphaned record</p>
                 <p className="hint">
-                  This process is tracked by Hawkeye but no longer exists in PM2. Removing it deletes its stored
+                  This process is tracked by dawgcodes-dashboard but no longer exists in PM2. Removing it deletes its stored
                   history.
                 </p>
               </div>
               <div className="manage-row-control">
                 <ConfirmButton
                   label="Remove record"
-                  question={`Remove ${name} from Hawkeye?`}
+                  question={`Remove ${name} from dawgcodes-dashboard?`}
                   variant="danger"
                   choices={[{ label: 'Remove', danger: true, onConfirm: () => onRemoveOrphan(name) }]}
                 />
