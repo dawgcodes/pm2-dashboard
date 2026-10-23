@@ -25,8 +25,8 @@ export default function Footer({ version }) {
       </span>
       <span className="app-footer-credit">
         Made with <span className="app-footer-heart">❤️</span> by{' '}
-        <a href="https://github.com/orangecoding" target="_blank" rel="noopener noreferrer">
-          Christian Kellner
+        <a href="https://github.com/dawgcodes" target="_blank" rel="noopener noreferrer">
+          dawgcodes
         </a>
       </span>
     </footer>
