@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 by Christian Kellner.
+ * Copyright (c) 2026 by dawgcodes.
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
 
@@ -69,7 +69,7 @@ export default function LoginApp() {
           </span>
           <h1>
             <span className="brand-pm2">pm2</span>
-            <span className="brand-hawkeye">-hawkeye</span>
+            <span className="brand-dawgcodes-dashboard">-dawgcodes-dashboard</span>
           </h1>
           <p className="subtle">
             Live process monitoring, merged log streaming, and one-click deployments for the PM2 daemon on this server.
