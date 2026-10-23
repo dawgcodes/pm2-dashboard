@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2026 by Christian Kellner.
+ * Copyright (c) 2026 by dawgcodes
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
+
 
 import fs from 'fs/promises';
 import path from 'path';
 
 const COPYRIGHT = `/*
- * Copyright (c) ${new Date().getFullYear()} by Christian Kellner.
+ * Copyright (c) ${new Date().getFullYear()} by dawgcodes.
  * Licensed under Apache-2.0 with Commons Clause and Attribution/Naming Clause
  */
 
@@ -31,7 +32,7 @@ async function getAllFiles(dir = '.') {
 /* eslint-disable no-console */
 async function addCopyright(files) {
   const oldCopyrightRegex =
-    /^(\/\*\n \* Copyright \(c\) \d{4} by Christian Kellner\.\n \* Licensed under Apache-2.0 with Commons Clause and Attribution\/Naming Clause\n \*\/\n\n)+/;
+    /^(\/\*\n \* Copyright \(c\) \d{4} by dawgcodes\.\n \* Licensed under Apache-2.0 with Commons Clause and Attribution\/Naming Clause\n \*\/\n\n)+/;
   for (let file of files) {
     try {
       let content = await fs.readFile(file, 'utf8');
@@ -50,3 +51,4 @@ async function addCopyright(files) {
 
 const filesToProcess = process.argv.length > 2 ? process.argv.slice(2) : await getAllFiles();
 await addCopyright(filesToProcess);
+
