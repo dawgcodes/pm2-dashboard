@@ -343,7 +343,7 @@ function DeployForm({ onCsrfRefresh, onDeployStarted, editingDeployment, onEditS
         {/* ── Required ─────────────────────────────────────────────────── */}
         <section className="deploy-required">
           <p className="hint">
-            Hawkeye clones the repository into the deploy base directory and starts it under PM2. On a redeploy it runs
+            dawgcodes-dashboard clones the repository into the deploy base directory and starts it under PM2. On a redeploy it runs
             git pull instead of cloning again.
           </p>
 
@@ -465,7 +465,7 @@ function DeployForm({ onCsrfRefresh, onDeployStarted, editingDeployment, onEditS
         >
           <Toggle
             label="Deploy automatically when the branch gets new commits"
-            hint="Hawkeye polls the remote branch and runs the same redeploy it runs when you click Redeploy. Local changes in the deploy directory are discarded without asking, since nobody is there to confirm."
+            hint="dawgcodes-dashboard polls the remote branch and runs the same redeploy it runs when you click Redeploy. Local changes in the deploy directory are discarded without asking, since nobody is there to confirm."
             checked={watchEnabled}
             onChange={setWatchEnabled}
           />
@@ -705,7 +705,7 @@ function DeployForm({ onCsrfRefresh, onDeployStarted, editingDeployment, onEditS
         >
           <Toggle
             label="Timestamp every log line"
-            hint="Required for Hawkeye to sort stdout and stderr chronologically. Keep this on."
+            hint="Required for dawgcodes-dashboard to sort stdout and stderr chronologically. Keep this on."
             checked={pm2Opts.time}
             onChange={(v) => setOpt('time', v)}
           />
