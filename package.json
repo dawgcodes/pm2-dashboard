@@ -1,0 +1,63 @@
+{
+  "name": "pm2-dashboard",
+  "version": "5.5.1",
+  "description": "Modern web dashboard for PM2 processes, metrics, and log files",
+  "type": "module",
+  "main": "lib/transport/server.js",
+  "scripts": {
+    "copy:assets": "cp media/favicon/* public/",
+    "build": "esbuild src/main.jsx --bundle --minify --format=iife --target=es2020 --outfile=public/app.js && esbuild src/login.jsx --bundle --minify --format=iife --target=es2020 --outfile=public/login.js && lessc public/styles.less public/styles.css && npm run copy:assets",
+    "start": "npm run build && node lib/transport/server.js",
+    "dev": "node esbuild.dev.mjs",
+    "format": "prettier --write \"**/*.{js,jsx,mjs}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,mjs}\"",
+    "lint": "eslint .",
+    "test": "NODE_ENV=test mocha",
+    "copyright": "node ./tools/copyright.js",
+    "release": "node ./tools/release/release.js"
+  },
+  "author": "dawgcodes",
+  "keywords": [
+    "pm2",
+    "logs",
+    "monitoring",
+    "dashboard"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dawgcodes/pm2-dashboard/issues"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=7.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "croner": "^10.0.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pm2": "^6.0.14",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@phosphor-icons/react": "^2.1.10",
+    "chai": "^6.2.2",
+    "chalk": "^6.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.9.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.11.0",
+    "less": "^4.9.0",
+    "mocha": "^11.8.0",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-markdown": "^10.1.0",
+    "supertest": "^7.2.2"
+  }
+}

@@ -1,0 +1,529 @@
+<p align="center">
+  <h1 align="center">PM2-dashboard</h1>
+<p align="center">
+
+<a href="https://orange-coding.net/">
+<picture>
+  <img alt="Jetbrains Open Source" src="https://github.com/orangecoding/pm2-dashboard/blob/master/media/logo.png" width="200">
+</picture>
+</a>
+</p>
+  
+  <p align="center"><strong>A modern, real-time web dashboard for your PM2 processes.</strong></p>
+  <p align="center">Monitor, restart, and tail logs - all from a sleek dark-mode UI.</p>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/node-%3E%3D22.0.0-brightgreen?logo=node.js" alt="Node.js" />
+  <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License" />
+  <img src="https://img.shields.io/badge/frontend-React%2019-61dafb?logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/transport-WebSockets-blueviolet" alt="WebSockets" />
+  <img src="https://github.com/orangecoding/pm2-dashboard/actions/workflows/test.yml/badge.svg" alt="Tests" />
+</p>
+
+---
+
+## Features
+
+- **Live process overview** - CPU, memory, uptime, and restart count at a glance
+- **Real-time log streaming** - stdout & stderr tailed directly in the browser
+- **Persistent monitoring** - CPU/memory history and logs stored in SQLite, survives page reloads
+- **One-click restart** - restart any process with an inline confirmation
+- **PM2 custom actions** - trigger any `axm_actions` your processes expose
+- **Runtime log level** - switch a running process to `debug` without restarting it, reverts on restart
+- **Secure by default** - scrypt password hashing, CSRF protection, rate limiting, CSP headers
+- **Single WebSocket connection** - no polling, no SSE; all real-time data over one multiplexed stream
+- **Alerting** - webhook and ntfy notifications when monitored processes log errors, with per-process mute and throttle support
+- **Dark-mode UI** - clean, responsive dashboard that works on desktop and mobile
+
+### How the dashboard is laid out
+
+Pick a process in the sidebar, then work on it in one of three tabs. Every
+per-process function lives in exactly one of them.
+
+| Tab | What it holds |
+|---|---|
+| **Logs** | Merged stdout and stderr, level filters, search, pause, copy, download |
+| **Metrics** | CPU and memory history for the process, next to host CPU, RAM, and disk |
+| **Manage** | Monitoring, per-process alerts, log level, custom actions, deployment config, delete |
+
+Restart and Stop/Start sit in the process header, alongside a live strip of CPU,
+memory, restart count, and uptime that stays visible on every tab. The cpu and
+mem readouts there, and the host CPU/RAM/disk readouts in the top bar, are
+shortcuts: clicking one opens the Metrics tab scrolled to that chart. They never
+draw a chart of their own, so every chart still lives in exactly one place.
+
+Process charts cover the last hour of samples; the host charts cover the full
+24-hour retention window, averaged into five-minute buckets.
+
+---
+
+## Screenshots
+
+| Login | Main View |
+|---|---|
+| ![Screenshot showing the login page](docs/screen1.png) | ![Screenshot showing the main view](docs/screen2.png) |
+
+---
+
+## 📡 Live vs. Monitored Processes
+
+PM2-dashboard has two modes for each process.
+
+**Live only (default)**
+
+When you open a process without enabling monitoring, you see real-time CPU, memory, and a live log stream. None of this is saved. Navigating away or closing the tab loses the history - when you return you start fresh.
+
+**Monitored**
+
+Click *Start Monitoring* on any process to enable persistent tracking. PM2-dashboard will:
+
+- Sample CPU and memory every 20 seconds and store the history (default: 24 hours)
+- Persist incoming log lines to the database (default: 14 days)
+- Show a sparkline chart of CPU and memory over time
+- Backfill the last log entries from the PM2 log files on first enable
+
+Monitoring state survives server restarts. You can stop monitoring at any time - this removes all stored history for that process.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 22 or higher
+- PM2 installed globally (`npm i -g pm2`)
+- At least one PM2 process running
+
+> [!IMPORTANT]
+> **Node.js only** - PM2-dashboard must run on Node.js. Alternative runtimes such as Bun or Deno are not supported, because the native SQLite addon (`better-sqlite3`) crashes there with a segmentation fault. Keep in mind that `bun run` and `bun start` replace `node` inside `package.json` scripts with Bun itself, so `bun start` does not start the server on Node.js. Use `npm start`, or build with any package manager and start the server explicitly with `node lib/transport/server.js`. Startup aborts with an explanatory message when an unsupported runtime is detected.
+
+### 1. Clone & install
+
+```bash
+git clone https://github.com/dawgcodes/pm2-dashboard.git
+cd pm2-dashboard
+yarn install
+```
+
+### 2. Configure
+
+Copy the example env file and open it in your editor:
+
+```bash
+cp .env.example .env
+```
+
+Generate a password hash and paste the output into `.env`:
+
+```bash
+node -e "
+  const crypto = require('crypto');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync('YOUR_PASSWORD', Buffer.from(salt,'hex'), 64).toString('hex');
+  console.log('AUTH_PASSWORD_SALT=' + salt);
+  console.log('AUTH_PASSWORD_HASH=' + hash);
+"
+```
+
+### 3. Build & run
+
+```bash
+npm start
+```
+
+Open **http://localhost:3030** in your browser.
+
+### 4. Run as a PM2 process (recommended)
+
+The recommended production setup is to run PM2-dashboard as a PM2 process itself so it is supervised and auto-restarted:
+
+```bash
+npm run build
+pm2 start lib/transport/server.js --name pm2-dashboard
+pm2 save
+```
+
+---
+
+## 🔄 Updating
+
+`update.sh` handles the full update cycle for a self-hosted installation:
+
+```bash
+./update.sh
+```
+
+It will:
+
+1. Pull the latest commits from upstream (fast-forward only - aborts if there are local changes)
+2. Install or update Node.js dependencies
+3. Rebuild the frontend bundle
+4. Restart the `pm2-dashboard` process under PM2 (if running)
+
+Make the script executable once before first use:
+
+```bash
+chmod +x update.sh
+```
+
+If PM2-dashboard is not running under PM2 when the script finishes, it will print the commands to start it manually.
+
+> [!NOTE]
+> **Database location** - by default the database is written to `./data/pm2-dashboard.db` inside the project directory. If you update by replacing the project folder (e.g. re-cloning), this file will be lost. Point `SQLITE_DB_PATH` at a directory outside the project to keep your data safe across updates (`pm2-dashboard.db` is created inside it automatically):
+> ```bash
+> SQLITE_DB_PATH=/var/lib/pm2-dashboard
+> ```
+> Create the directory first: `mkdir -p /var/lib/pm2-dashboard`
+
+> [!NOTE]
+> **PM2 timestamps** - PM2-dashboard merges stdout and stderr and sorts log lines chronologically. This requires PM2 to prefix each line with a timestamp. Always start your processes with `--time`:
+> ```bash
+> pm2 start app.js --name my-app --time
+> ```
+> Without it, log lines from stdout and stderr cannot be sorted correctly.
+
+---
+
+## ⚙️ Configuration
+
+All settings are read from a `.env` file in the project root. Copy `.env.example` to get started.
+
+**Server**
+
+| Variable | Default | Description |
+|---|---|---|
+| `HOST` | `0.0.0.0` | Bind address |
+| `PORT` | `3030` | HTTP and WebSocket port |
+
+**Authentication**
+
+| Variable | Default | Description |
+|---|---|---|
+| `AUTH_USERNAME` | `admin` | Login username (case-insensitive) |
+| `AUTH_PASSWORD_SALT` | - | Hex-encoded salt (generated above) |
+| `AUTH_PASSWORD_HASH` | - | Hex-encoded scrypt hash (64 bytes) |
+| `SESSION_TTL_MS` | `28800000` | Session lifetime in ms (default: 8 h) |
+
+**Rate limiting**
+
+| Variable | Default | Description |
+|---|---|---|
+| `AUTH_MIN_RESPONSE_MS` | `900` | Minimum login response time (timing-attack mitigation) |
+| `LOGIN_WINDOW_MS` | `600000` | Sliding window for login attempts (10 min) |
+| `LOGIN_MAX_REQUESTS` | `12` | Max login attempts per window |
+| `LOGIN_FAILURE_WINDOW_MS` | `1800000` | Window for exponential lockout (30 min) |
+| `LOGIN_BASE_LOCKOUT_MS` | `30000` | Initial lockout after repeated failures (30 s) |
+| `LOGIN_MAX_LOCKOUT_MS` | `43200000` | Maximum lockout period (12 h) |
+| `UNAUTH_WINDOW_MS` | `60000` | Window for unauthenticated access attempts (1 min) |
+| `UNAUTH_MAX_REQUESTS` | `10` | Max unauthenticated hits before a 5 s penalty |
+| `UNAUTH_PENALTY_MS` | `5000` | Delay added to rate-limited unauthenticated responses |
+
+**Cookies & proxy**
+
+| Variable | Default | Description |
+|---|---|---|
+| `COOKIE_SECURE` | `auto` | `auto` / `always` / `never` |
+| `TRUST_PROXY` | `0` | Set to `1` when behind a reverse proxy |
+
+**Storage**
+
+| Variable | Default | Description |
+|---|---|---|
+| `SQLITE_DB_PATH` | `./data` | Directory for the SQLite database (`pm2-dashboard.db` is created inside) |
+| `METRICS_RETENTION_MS` | `86400000` | How long metric samples are kept (24 h) |
+| `LOGS_RETENTION_MS` | `1209600000` | How long log entries are kept (14 days) |
+| `MAX_LOG_BYTES_PER_FILE` | `5242880` | Max bytes read per PM2 log file (5 MB) |
+
+---
+
+## ⚡ Custom Actions with tx2
+
+PM2-dashboard can display and trigger custom actions that your app exposes to PM2 via **[tx2](https://github.com/pm2/tx2)**.
+
+### Install tx2
+
+```bash
+npm install tx2
+```
+
+### Define actions in your app
+
+```js
+import tx2 from 'tx2';
+
+// Simple action
+tx2.action('clear cache', (done) => {
+  myCache.flush();
+  done({ success: true });
+});
+
+// Action with a parameter
+tx2.action('set sample rate', (rate, done) => {
+  sampler.rate = Number(rate);
+  done({ rate: sampler.rate });
+});
+```
+
+For log levels specifically there is a dedicated control that needs no tx2, see
+[Runtime log level](#runtime-log-level) below.
+
+`done()` must always be called - it signals to PM2 that the action has completed and sends the return value back to the dashboard.
+
+### Trigger from PM2-dashboard
+
+Once your process is running, open it in PM2-dashboard and go to the **Manage** tab. Any registered actions are listed there, each with its own **Run** button. Actions declared with `arity: 1` ask for their parameter before running.
+
+**Available tx2 APIs**
+
+| API | Purpose |
+|---|---|
+| `tx2.action(name, fn)` | Register a triggerable action |
+| `tx2.action(name, { arity: 1 }, fn)` | Action that accepts a parameter |
+| `tx2.metric(name, fn)` | Expose a live metric |
+| `tx2.counter(name)` | Incrementing counter |
+| `tx2.histogram(name)` | Value distribution histogram |
+
+---
+
+## Runtime log level
+
+The **Manage** tab can raise or lower the log level of a running process
+without restarting it. The level applies to that instance only: as soon as the
+process restarts it is back to whatever the application boots with.
+
+Node has no log level that can be changed from outside a process, so the
+application has to listen. PM2 opens an IPC channel to every Node process it
+starts, so this needs no dependency:
+
+```js
+process.on('message', (packet) => {
+  if (packet?.topic !== 'dashboard:log-level') return;
+  if (packet.data?.level) logger.level = packet.data.level;
+  process.send({
+    type: 'dashboard:log-level:ack',
+    data: { level: logger.level },
+  });
+});
+```
+
+The answer is identified by its `type`, not by a topic: PM2 delivers `topic`
+intact on the way in but strips it from anything a process sends back.
+
+A message with `data.level` sets the level. A message without one only
+answers, which is how the dashboard reads the current level without changing
+anything. Always answer with the level the logger actually ended up on, not
+the one that was requested, so the dashboard shows the truth. A process that
+does not answer within 1.5 s is reported in the UI as not supporting this.
+
+Accepted levels: `trace`, `debug`, `info`, `warn`, `error`, `fatal`, `silent`.
+
+This works with any logger that can change its level at runtime. It is tested
+with pino, where three details are worth knowing:
+
+- `logger.level = 'debug'` takes effect immediately, and child loggers without
+  a level of their own follow the root, including ones created earlier.
+- A child created with an explicit `{ level: 'warn' }` stays at `warn`.
+- `pino-pretty` only formats and does not filter, but a transport configured
+  with its own `level` is a second gate and will still drop lines.
+
+One display note: the Logs tab detects a line's level from its text. Pretty
+printed output (`DEBUG (1234): ...`) is recognised, raw pino JSON is not,
+because it writes levels as numbers (`"level":20`). Those lines still show,
+they just carry no level badge and are unaffected by the level filters.
+
+Processes with no IPC channel, so anything not started as a Node process by
+PM2, cannot be controlled this way and will report as unsupported.
+
+---
+
+## Development
+
+PM2-dashboard uses a two-process dev setup: the Node.js backend runs on port 3030 and an esbuild dev server handles the frontend on port 3042 with instant rebuilds and hot module replacement.
+
+### Start the backend
+
+```bash
+node --inspect lib/transport/server.js
+```
+
+### Start the frontend dev server
+
+```bash
+npm run dev
+```
+
+Open **http://localhost:3042**. The dev server proxies all `/api/*`, `/ws/*`, and HTML routes through to the backend.
+
+### Tests, lint, format
+
+```bash
+npm test
+npm run lint
+npm run format        # write
+npm run format:check  # check only
+```
+
+---
+
+## 🔔 Alerting
+
+PM2-dashboard can send you a notification whenever a monitored process logs something that matches your configured severity threshold - for example, every time an error is written to stderr.
+
+### How it works
+
+Log lines captured from your PM2 processes flow through a detection pipeline:
+
+1. **Level detection** - each line is inspected for a severity prefix (`ERROR`, `WARN`, `INFO`, `DEBUG`). Lines arriving on stderr that carry no detectable prefix are automatically treated as `error`.
+2. **Threshold check** - the detected level is compared against the set of levels you selected in Settings. If the level is not in the set, the line is silently discarded.
+3. **Per-process mute check** - if alerts are switched off for that process in its **Manage** tab, the alert is skipped.
+4. **Throttle check** - in *throttle* mode a second alert for the same process is suppressed until the configured cool-down window has elapsed. In *every match* mode all qualifying lines trigger a notification.
+5. **Dispatch** - all enabled reporters are called concurrently. A failure in one reporter does not block the others.
+
+### Settings UI
+
+Click the gear icon in the top bar to open the settings overlay.
+
+- **General** - your `.env` values, grouped by concern (server, sign in, brute-force protection, retention, deployments) with the raw key shown under each field. Also changes your login password. Changes are written to disk; a restart of PM2-dashboard is required for them to take effect.
+- **Alerting** - configure the alert mode, log level thresholds, and reporters.
+
+### Reporters
+
+#### Webhook
+
+Sends an HTTP POST request to any URL you choose. You can attach custom request headers and build a fully custom JSON body using key/value pairs with template variables:
+
+| Variable | Replaced with |
+|---|---|
+| `{logLevel}` | Detected log level (`error`, `warn`, `info`, `debug`) |
+| `{log_message}` | The full log line text |
+| `{process_name}` | The PM2 process name |
+
+Variable substitution is JSON-aware: if a value contains `{log_message}` inside a quoted JSON string it is substituted as a raw string; if it appears as an unquoted JSON value the substituted text is JSON-encoded automatically, preventing malformed payloads.
+
+A live curl preview updates in real time as you fill in the form so you can verify the exact request before saving.
+
+#### ntfy
+
+Sends a push notification to an [ntfy](https://ntfy.sh) topic. Configure the server URL, topic, message priority, and an optional auth token. PM2-dashboard sets the `Title`, `Priority`, and `Tags` headers automatically.
+
+### Per-process mute
+
+Open a monitored process and go to its **Manage** tab. The **Alerts** switch under Monitoring mutes and unmutes notifications for that process alone. The preference is stored in the database and survives restarts.
+
+
+---
+
+## Deploy
+
+PM2-dashboard can clone, install, build, and register new Node.js applications directly from the UI -- no manual SSH required.
+
+### How it works
+
+Click **Deploy** in the top bar to open the deploy form. Four fields are required (app name, branch, repository URL, start script); everything else is folded into collapsible groups that show their current value on the summary line. Hit **Deploy** and PM2-dashboard will:
+
+1. Run an optional pre-setup shell script (e.g. install system dependencies)
+2. `git clone` the repository into `DEPLOY_BASE_DIR/<app-name>` (default: `./apps/<app-name>`)
+3. Run the install command (`npm install`, `yarn`, or `pnpm install`)
+4. Run an optional build command (e.g. `npm run build`)
+5. Run an optional post-setup shell script (e.g. run database migrations)
+6. Register and start the process with PM2
+
+A real-time progress log streams each step in the browser.
+
+### Deploy form fields
+
+**Repository** (required)
+
+| Field | Description |
+|---|---|
+| App name | Unique PM2 process name. Alphanumeric, dashes, and underscores only. |
+| Repo URL | HTTPS URL of a public GitHub or GitLab repository. |
+| Branch | Git branch to clone and deploy from. Defaults to `main`. |
+
+**Runtime** (required)
+
+| Field | Description |
+|---|---|
+| Start script | Entry point relative to the repo root, e.g. `src/server.js`. |
+| Interpreter | Node.js interpreter path. Leave as `node` for the system default. |
+| Exec mode | `fork` (single process) or `cluster` (multiple workers). |
+| Instances | Number of cluster workers. Set `-1` to use all CPU cores. |
+
+**Setup** (optional)
+
+| Field | Description |
+|---|---|
+| Install command | Package manager command. Select `skip` to skip dependency installation entirely. |
+| Build command | Optional build step, e.g. `npm run build`. |
+| Pre-setup script | Shell script that runs in `DEPLOY_BASE_DIR` before cloning. Use it to check requirements or install OS packages. |
+| Post-setup script | Shell script that runs in the cloned repo directory after the build. Use it for migrations, file permission fixes, etc. |
+
+**Auto-deploy** (optional)
+
+| Field | Description |
+|---|---|
+| Deploy automatically | Poll the branch and redeploy whenever it gets new commits. Off by default. |
+| Check every | Minutes between polls, 1 to 1440. Defaults to 5. |
+
+**Environment** (optional)
+
+| Field | Description |
+|---|---|
+| Env file | Path to a `.env` file inside the repo to load at start time, e.g. `.env.production`. |
+| Environment variables | Key/value pairs passed directly to the process. These override values from the env file. |
+
+Further collapsible groups cover how PM2 runs the app (interpreter, exec mode, instances), crash recovery (auto-restart, memory limits, scheduled restarts, ready signals), and logging and file watching.
+
+### Redeploying and editing
+
+A process that PM2-dashboard deployed is marked as such in two places: a git icon next to its name in the sidebar, and a chip in its header showing the repository and branch it came from. Both a **Redeploy** button in the header and the chip itself open the saved configuration, pre-filled.
+
+In that form, **Save and redeploy** saves and immediately runs `git pull --rebase`, reinstall, rebuild, and PM2 restart. **Save only** persists the configuration without touching the running process. The same Redeploy button also sits in the **Manage** tab, next to the repository URL and the time of the last successful deploy.
+
+Deployments whose PM2 process is gone appear under **Not deployed** in the sidebar with their own Redeploy and Delete buttons.
+
+### Auto-deploy on new commits
+
+Every deployment can watch its own branch. Enable **Auto-deploy** in the deploy form and pick a poll interval; PM2-dashboard then runs `git ls-remote` against the repository on that interval and compares the branch head with the commit checked out on disk. When the branch has moved ahead, it runs exactly the same sequence as a manual redeploy: pull, install, build, post-setup script, PM2 restart. Progress streams over the same WebSocket, so an auto-deploy is visible live if you happen to have the app open.
+
+Three details worth knowing:
+
+- **Local changes are discarded.** A manual redeploy asks before throwing away uncommitted tracked changes in the deploy directory. An auto-deploy has nobody to ask, so it runs `git reset --hard` and continues. Do not edit deployed files in place on a watched deployment.
+- **One deploy per commit.** The SHA that triggered a deploy is recorded before the deploy starts, so a failing deploy waits for the next commit instead of retrying every interval.
+- **Results are notified.** If a webhook or ntfy reporter is enabled under **Settings - Alerting**, each auto-deploy sends one notification with its outcome. Unlike log alerts, this ignores the log-level threshold, the throttle window, and the per-process alerts toggle.
+
+The **Manage** tab shows the current state under the repository URL: the interval, when the branch was last checked, and the last error if a poll or an auto-deploy failed. Polling uses whatever git credentials the server already has, with prompts disabled, so a private repository without a usable key fails fast and records the error instead of hanging.
+
+### Configuration
+
+Set `DEPLOY_BASE_DIR` in your `.env` to control where apps are cloned:
+
+```
+DEPLOY_BASE_DIR=./apps
+```
+
+The directory is created automatically on first deploy. Use an absolute path to place apps outside the project directory.
+
+---
+
+## Security
+
+- **CSRF tokens** - one-time-use tokens rotated after every state-changing request
+- **Rate limiting** - sliding window + exponential backoff on failed logins; separate rate limit for unauthenticated access
+- **CSP headers** - strict Content-Security-Policy including `ws:`/`wss:` for WebSockets
+- **Timing-attack mitigation** - constant-time credential comparison with a minimum response delay
+- **Secure cookies** - `HttpOnly`, `SameSite=Strict`, optional `Secure` flag
+
+---
+
+## Sponsorship [![](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/orangecoding)
+
+I maintain this and other open-source projects in my free time.
+If you find it useful, consider supporting the project.
+
+---
+
+## License
+
+[Apache-2.0](LICENSE) - © David Ian Black
